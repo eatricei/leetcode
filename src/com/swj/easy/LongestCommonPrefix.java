@@ -115,11 +115,176 @@ public class LongestCommonPrefix {
         }
         return true;
     }
+
+    /**
+     * 采用字典的数据结构
+     * @param strings
+     * @return
+     */
+    public static String longestCommonPrefixWithTrie(String[] strings) {
+        StringBuilder result = new StringBuilder("");
+        if (strings.length == 0){
+            return "";
+        }
+        Trie trie = new Trie();
+        String str = strings[0];
+        for(String string:strings){
+            if(string.length()< str.length()){
+                str = string;
+            }
+            trie.insert(string);
+        }
+        return trie.searchLongestPrefix(str);
+    }
     public static void main(String[] args) {
         long start = System.nanoTime();
-        //System.out.println(longestCommonPrefix(new String[]{"aaa","aas"}));
-       // System.out.println(longestCommonPrefixWithDivide(new String[]{"aaa", "aas"}));
-        System.out.println(longestCommonPrefixWithBinarySearch(new String[]{"aaa", "aas"}));
+/*        System.out.println(longestCommonPrefix(new String[]{"aaa","aas"}));
+        System.out.println(longestCommonPrefixWithDivide(new String[]{"aaa", "aas"}));
+        System.out.println(longestCommonPrefixWithBinarySearch(new String[]{"aaa", "aas"}));*/
+        System.out.println(longestCommonPrefixWithTrie(new String[]{"aaa", "aas"}));
         System.out.println(System.nanoTime()-start);
+    }
+}
+
+/**
+ * Given a set of keys S = [S1,S2…Sn]
+ * You may assume that all inputs are consist of lowercase letters a-z
+ *
+ * find the longest common prefix among a string q and S. This LCP query will be called frequently.
+ * We could optimize LCP queries by storing the set of keys S in a Trie.
+ * For more information about Trie, please see this article Implement a trie (Prefix trie).
+ * In a Trie, each node descending from the root represents a common prefix of some keys.
+ * But we need to find the longest common prefix of a string q and all key strings.
+ * This means that we have to find the deepest path from the root,
+ * which satisfies the following conditions:
+ * it is prefix of query string q each node along the path must contain only one child element.
+ * Otherwise the found path will not be a common prefix among all strings.
+ * * the path doesn't comprise of nodes which are marked as end of key.
+ * Otherwise the path couldn't be a prefix a of key which is shorter than itself.
+ *
+ * https://leetcode.com/articles/implement-trie-prefix-tree/
+ */
+class TrieNode {
+
+    private TrieNode[] links;
+
+    private final int R = 26;
+
+    private boolean isEnd;
+
+    private int size;
+
+    public TrieNode() {
+        links = new TrieNode[R];
+    }
+
+    public boolean containsKey(char ch) {
+        return links[ch -'a'] != null;
+    }
+
+    public TrieNode get(char ch) {
+        return links[ch -'a'];
+    }
+
+    public void put(char ch, TrieNode node){
+        links[ch - 'a'] = node;
+        size ++;
+    }
+
+    public void setEnd() {
+        isEnd = true;
+    }
+
+    public boolean isEnd() {
+        return isEnd;
+    }
+
+    public int getLinks(){
+        return size;
+    }
+
+}
+
+class Trie{
+    private TrieNode root;
+
+    public Trie(){
+        root = new TrieNode();
+    }
+
+    /**
+     *  Inserts a word into the trie.
+     * @param word
+     */
+    public void insert(String word){
+        TrieNode node = root;
+        for (int i = 0; i < word.length(); i++){
+            char currentChar = word.charAt(i);
+            if (!node.containsKey(currentChar)){
+                node.put(currentChar, new TrieNode());
+            }
+            node = node.get(currentChar);
+        }
+        node.setEnd();
+    }
+
+    /**
+     * search a prefix or whole key in trie and
+     * returns the node where search ends
+     * @param word
+     * @return
+     */
+    private TrieNode searchPrefix(String word){
+        TrieNode node = root;
+        for (int i = 0; i < word.length(); i++){
+            char currentChar = word.charAt(i);
+            if (node.containsKey(currentChar)){
+                node = node.get(currentChar);
+            }else {
+                return null;
+            }
+        }
+        return node;
+    }
+
+    /**
+     * Returns if the word is in the trie.
+     * @param word
+     * @return
+     */
+    public boolean search(String word){
+        TrieNode node = searchPrefix(word);
+        return node != null && node.isEnd();
+    }
+
+    /**
+     *  Returns if there is any word in the trie
+     *  that starts with the given prefix.
+     * @param prefix
+     * @return
+     */
+    public boolean startsWith(String prefix){
+        TrieNode node = searchPrefix(prefix);
+        return node != null;
+    }
+
+    /**
+     *  search Longest Prefix
+     * @param word
+     * @return
+     */
+    public String searchLongestPrefix(String word){
+        TrieNode node = root;
+        StringBuilder prefix = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            char curLetter = word.charAt(i);
+            if (node.containsKey(curLetter) && (node.getLinks() == 1) && (!node.isEnd())) {
+                prefix.append(curLetter);
+                node = node.get(curLetter);
+            } else {
+                return prefix.toString();
+            }
+        }
+        return prefix.toString();
     }
 }
