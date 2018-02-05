@@ -29,7 +29,22 @@ public class ThreeNumbersSumClosest {
                     int temp = Math.abs(tmp - target);
                     boolean isCloser = (temp - distance < 0);
                     if (!isCloser){
-                        break;
+                        if (tmp > target){
+                            while (j < k && nums[k] == nums[k - 1]){
+                                k --;
+                            }
+                            k --;
+                        }
+                        if (tmp < target){
+                            while (j < k && nums[j] == nums[j + 1]){
+                                j ++;
+                            }
+                            j ++;
+                        }
+                        if (tmp == target){
+                            return target;
+                        }
+                        continue;
                     }else {
                         result = tmp;
                         distance = temp;
@@ -54,6 +69,6 @@ public class ThreeNumbersSumClosest {
         return result;
     }
     public static void main(String[] args) {
-        System.out.println(threeSumClosest(new int[]{0,2,1,-3}, 1));
+        System.out.println(threeSumClosest(new int[]{0,1,2}, 3));
     }
 }
