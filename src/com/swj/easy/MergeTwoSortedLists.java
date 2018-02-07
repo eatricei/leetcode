@@ -4,7 +4,7 @@ package com.swj.easy;
  * Merge two sorted linked lists and return it as a new list.
  * The new list should be made by splicing together the nodes of the first two lists.
  * @author swj
- * @create 2018/2/7
+ * @date 2018/2/7
  */
 public class MergeTwoSortedLists {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
