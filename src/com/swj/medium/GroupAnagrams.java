@@ -1,10 +1,8 @@
 package com.swj.medium;
 
-import edu.princeton.cs.algs4.In;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 49. Group Anagrams
@@ -21,6 +19,11 @@ import java.util.List;
  * @date 2018/3/30
  */
 public class GroupAnagrams {
+    /**
+     * 
+     * @param strs
+     * @return
+     */
     public List<List<String>> groupAnagrams(String[] strs) {
         List<List<String>> result = new ArrayList<>();
         List<String> temp = new ArrayList<>();
@@ -39,4 +42,26 @@ public class GroupAnagrams {
         }
         return result;
     }
+
+    /**
+     *
+     * @param strs
+     * @return
+     */
+    public List<List<String>> groupAnagramsHire(String[] strs){
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str: strs){
+            char[] temp = str.toCharArray();
+            Arrays.sort(temp);
+            String tempStr = String.valueOf(temp);
+            if (map.get(tempStr) == null){
+                map.put(tempStr, new ArrayList<>());
+                map.get(tempStr).add(str);
+            } else {
+                map.get(tempStr).add(str);
+            }
+        }
+        return map.values().stream().collect(Collectors.toList());
+    }
+
 }
